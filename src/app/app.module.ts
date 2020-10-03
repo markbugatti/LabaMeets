@@ -1,8 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { WebcamModule } from 'ngx-webcam';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 
 import { AppComponent } from './app.component';
-import { WebcamModule } from 'ngx-webcam';
 
 @NgModule({
   declarations: [
@@ -11,6 +13,8 @@ import { WebcamModule } from 'ngx-webcam';
   imports: [
     BrowserModule,
     WebcamModule,
+    BrowserAnimationsModule,
+    BsDropdownModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent],

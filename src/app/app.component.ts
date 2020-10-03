@@ -11,77 +11,70 @@ import {WebcamImage, WebcamInitError, WebcamUtil} from 'ngx-webcam';
 
 
 export class AppComponent implements OnInit {
-  preview: any = document.getElementById("preview");
-  recording: any = document.getElementById("recording");
-  startButton: any = document.getElementById("startButton");
-  stopButton: any = document.getElementById("stopButton");
-  downloadButton: any = document.getElementById("downloadButton");
-  logElement: any = document.getElementById("log");
-  stream1: any;
+  // toggle webcam on/off
+  public showWebcam = true;
+  public allowCameraSwitch = true;
+  public multipleWebcamsAvailable = false;
+  public deviceId: string;
+  public webCams: MediaDeviceInfo[];
+  public videoOptions: MediaTrackConstraints = {
+    // width: {ideal: 1024},
+    // height: {ideal: 576}
+  };
+  public errors: WebcamInitError[] = [];
 
-  recordingTimeMS = 5000;
+  // latest snapshot
+  public webcamImage: WebcamImage = null;
 
-  ngOnInit(): void {
+  // webcam snapshot trigger
+  private trigger: Subject<void> = new Subject<void>();
+  // switch to next / previous / specific webcam; true/false: forward/backwards, string: deviceId
+  private nextWebcam: Subject<boolean|string> = new Subject<boolean|string>();
 
+  public ngOnInit(): void {
+    WebcamUtil.getAvailableVideoInputs()
+      .then((mediaDevices: MediaDeviceInfo[]) => {
+        this.webCams = mediaDevices;
+        //this.multipleWebcamsAvailable = mediaDevices && mediaDevices.length > 1;
+      });
+
+      console.log(this.webCams);
   }
 
-  log(msg: string): void {
-    this.logElement.innerHTML += msg + '\n';
+  public triggerSnapshot(): void {
+    this.trigger.next();
   }
 
-  wait(delayInMs): Promise<any> {
-    return new Promise(resolve => setTimeout(resolve, delayInMs));
+  public toggleWebcam(): void {
+    this.showWebcam = !this.showWebcam;
   }
 
-  startRecording(stream, lengthInMS): Promise<any> {
-    const recorder = new MediaRecorder(stream);
-    const data = [];
-
-    recorder.ondataavailable = event => data.push(event.data);
-    recorder.start();
-    this.log(recorder.state + ' for ' + (lengthInMS/1000) + ' seconds...');
-
-    const stopped = new Promise((resolve, reject) => {
-      recorder.onstop = resolve;
-      recorder.onerror = event => reject(event.timeStamp);
-    });
-
-    const recorded = this.wait(lengthInMS).then(
-      () => recorder.state === 'recording' && recorder.stop()
-    );
- 
-    return Promise.all([
-      stopped,
-      recorded
-    ])
-    .then(() => data);
+  public handleInitError(error: WebcamInitError): void {
+    this.errors.push(error);
   }
 
-  stop(stream) {
-    stream.getTracks().forEach(track => track.stop());
+  public showNextWebcam(directionOrDeviceId: boolean|string): void {
+    // true => move forward through devices
+    // false => move backwards through devices
+    // string => move to device with given deviceId
+    this.nextWebcam.next(directionOrDeviceId);
   }
 
-  previewing(): void {
-    navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: true
-    }).then(stream => {
-      this.preview.srcObject = stream;
-      this.downloadButton.href = stream;
-      this.stream1 = stream;
-      this.preview.captureStream = this.preview.captureStream || this.preview.mozCaptureStream;
-      return new Promise(resolve => this.preview.onplaying = resolve);
-    }).then(() => this.startRecording(this.preview.captureStream(), this.recordingTimeMS))
-    .then (recordedChunks => {
-      const recordedBlob = new Blob(recordedChunks, { type: "video/webm" });
-      this.recording.src = URL.createObjectURL(recordedBlob);
-      this.downloadButton.href = this.recording.src;
-      this.downloadButton.download = "RecordedVideo.webm";
-
-      this.log("Successfully recorded " + recordedBlob.size + " bytes of " +
-          recordedBlob.type + " media.");
-    })
-    .catch(this.log);
+  public handleImage(webcamImage: WebcamImage): void {
+    console.info('received webcam image', webcamImage);
+    this.webcamImage = webcamImage;
   }
 
+  public cameraWasSwitched(deviceId: string): void {
+    console.log('active device: ' + deviceId);
+    this.deviceId = deviceId;
+  }
+
+  public get triggerObservable(): Observable<void> {
+    return this.trigger.asObservable();
+  }
+
+  public get nextWebcamObservable(): Observable<boolean|string> {
+    return this.nextWebcam.asObservable();
+  }
 }

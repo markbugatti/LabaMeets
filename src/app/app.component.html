@@ -1,22 +1,41 @@
-<div class="left">
-  <div id="startButton" class="button" (click)="previewing()">
-    Start
-  </div>
-  <h2>Preview</h2>
-  <video id="preview" width="160" height="120" src={{stream1}} autoplay muted></video>
-</div>
-<div class="right">
-  <div id="stopButton" class="button">
-    Stop
-  </div>
-  <h2>Recording</h2>
-  <video id="recording" width="160" height="120" controls></video>
-  <a id="downloadButton" class="button">
-    Download
-  </a>
-</div>
-<div class="bottom">
-  <pre id="log"></pre>
+
+<div>
+    <webcam [height]="500" [width]="500" [trigger]="triggerObservable" (imageCapture)="handleImage($event)" *ngIf="showWebcam"
+            [allowCameraSwitch]="allowCameraSwitch" [switchCamera]="nextWebcamObservable"
+            [videoOptions]="videoOptions"
+            [imageQuality]="1"
+            (cameraSwitched)="cameraWasSwitched($event)"
+            (initError)="handleInitError($event)"
+    ></webcam>
+    <br/>
+    <button class="actionBtn" (click)="triggerSnapshot();">Take A Snapshot</button>
+    <button class="actionBtn" (click)="toggleWebcam();">Toggle Webcam</button>
+    <br/>
+    <button class="actionBtn" (click)="showNextWebcam(true);" [disabled]="!multipleWebcamsAvailable">Next Webcam</button>
+    <input id="cameraSwitchCheckbox" type="checkbox" [(ngModel)]="allowCameraSwitch"><label for="cameraSwitchCheckbox">Allow Camera Switch</label>
+    <br/>
+    DeviceId: <input id="deviceId" type="text" [(ngModel)]="deviceId" style="width: 500px">
+    <button (click)="showNextWebcam(deviceId);">Activate</button>
 </div>
 
-//<webcam></webcam>
+<div class="snapshot" *ngIf="webcamImage">
+    <h2>Nice one!</h2>
+    <img [src]="webcamImage.imageAsDataUrl"/>
+</div>
+
+<h4 *ngIf="errors.length > 0">Messages:</h4>
+<ul *ngFor="let error of errors">
+<li>{{error | json}}</li>
+</ul>
+
+<div class="btn-group" dropdown>
+    <button id="button-basic" dropdownToggle type="button" class="btn btn-primary dropdown-toggle"
+            aria-controls="dropdown-basic">
+      Cameras list <span class="caret"></span>
+    </button>
+    <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu"
+        role="menu" aria-labelledby="button-basic">
+      <li *ngFor="let cam of webCams" role="menuitem"><a class="dropdown-item" href="#" (click)="showNextWebcam(cam?.deviceId)">{{cam?.label}}</a></li>
+      <li class="divider dropdown-divider"></li>
+    </ul>
+</div>
