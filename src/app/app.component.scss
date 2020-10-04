@@ -1,0 +1,12 @@
+@import "./node_modules/bootstrap/scss/functions";
+@import "./node_modules/bootstrap/scss/variables";
+@import "./node_modules/bootstrap/scss/mixins";
+
+.main-container {
+    height: 100%!important;
+    background-color: $dark;
+}
+
+.bottom-block {
+    height: 80px;
+}

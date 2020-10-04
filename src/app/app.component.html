@@ -1,20 +1,44 @@
-<div>
-	<video  id="videoElement"  width="250" height="250" autoplay muted></video>
-    <button type="button" class="btn btn-primary" (click)="startVideo()">Start</button>
-    <button type="button" class="btn btn-danger" (click)="stopVideo()">Stop</button>
+<!-- main container -->
+<div class="main-container container-fluid"> 
+  
+  <!-- container for media screens -->
+  <div class="container p-3">
+    <div class="card p-2" style="width: 18rem;">
+      <!-- <img src="..." class="card-img-top" alt="..."> -->
+      <video id="videoElement" height="250px" autoplay></video>
 
-    <div class="btn-group" dropdown>
-        <button id="button-basic" dropdownToggle type="button" class="btn btn-primary dropdown-toggle"
-                aria-controls="dropdown-basic">
-          Button dropdown <span class="caret"></span>
-        </button>
-        <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu"
-            role="menu" aria-labelledby="button-basic">
-          <li *ngFor="let camera of videoInputs" role="menuitem" (click)="changeVideoInput(camera?.deviceId)"><a class="dropdown-item" href="#">{{camera?.label}}</a></li>
-          <li class="divider dropdown-divider"></li>
-          <li *ngFor="let microphone of audioInputs" role="menuitem" (click)="changeAudioIntput(microphone?.deviceId)" ><a class="dropdown-item" href="#">{{microphone?.label}}</a></li>
-          <li class="divider dropdown-divider"></li>
-          <li *ngFor="let speaker of audioOutputs" role="menuitem" (click)="changeAudioOutput(speaker?.deviceId)"><a class="dropdown-item" href="#">{{speaker?.label}}</a></li>
-        </ul>
+      <div class="card-body">
+        <h5 class="card-title">User Name</h5>
+        <!-- <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
+        <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+
       </div>
+    </div>
+  </div>
+
+  <!-- control container -->
+  <span class=" fixed-bottom d-flex justify-content-center bg-dark text-white">
+    
+    <button type="button" class="btn btn-primary mr-2 mb-2" (click)="startVideo()">Start</button>
+    <button type="button" class="btn btn-danger mr-2 mb-2" (click)="stopVideo()">Stop</button>
+
+    <div class="btn-group mr-2 mb-2" dropdown [dropup]=true>
+      <button id="button-basic" dropdownToggle type="button" class="btn btn-primary dropdown-toggle"
+              aria-controls="dropdown-basic">
+        Media Devices<span class="caret"></span>
+      </button>
+      <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu"
+          role="menu" aria-labelledby="button-basic">
+        <li role="menuitem"><a class="dropdown-item" href="#"><span class="badge badge-secondary">Available cameras</span></a></li>
+        <li *ngFor="let camera of videoInputs" role="menuitem" (click)="changeVideoInput(camera?.deviceId)"><a class="dropdown-item" href="#">{{camera?.label}}</a></li>
+        <li class="divider dropdown-divider"></li>
+        <li role="menuitem"><a class="dropdown-item" href="#"><span class="badge badge-secondary">Available microphones</span></a></li>
+        <li *ngFor="let microphone of audioInputs" role="menuitem" (click)="changeAudioIntput(microphone?.deviceId)" ><a class="dropdown-item" href="#">{{microphone?.label}}</a></li>
+        <li class="divider dropdown-divider"></li>
+        <li role="menuitem"><a class="dropdown-item" href="#"><span class="badge badge-secondary">Available speakers</span></a></li>
+        <li *ngFor="let speaker of audioOutputs" role="menuitem" (click)="changeAudioOutput(speaker?.deviceId)"><a class="dropdown-item" href="#">{{speaker?.label}}</a></li>
+      </ul>
+    </div>
+
+  </span>
 </div>

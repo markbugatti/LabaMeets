@@ -11,7 +11,7 @@ import {WebcamImage, WebcamInitError, WebcamUtil} from 'ngx-webcam';
 
 
 export class AppComponent implements OnInit {
-  public stream: HTMLVideoElement;
+  public videoElement: HTMLVideoElement;
   public videoInputs: MediaDeviceInfo[];
   public audioInputs: MediaDeviceInfo[];
   // optional
@@ -21,7 +21,7 @@ export class AppComponent implements OnInit {
   private audioConstraints: boolean | MediaTrackConstraints;
 
   ngOnInit(): void {
-    this.stream = document.querySelector('#videoElement') as HTMLVideoElement;
+    this.videoElement = document.querySelector('#videoElement') as HTMLVideoElement;
     this.getIODevices();
     this.constraints = { audio: true, video: true };
     this.videoConstraints = this.constraints.video;
@@ -87,7 +87,8 @@ export class AppComponent implements OnInit {
 
     navigator.mediaDevices.getUserMedia(this.constraints)
       .then((stream) => {
-        this.stream.srcObject = stream;
+        this.videoElement.srcObject = stream;
+        this.videoElement.muted = true;
       })
       .catch((error) => {
         console.log('Something went wrong!: ' + error);
@@ -96,12 +97,12 @@ export class AppComponent implements OnInit {
   }
 
   stopVideo(): void {
-    const stream = this.stream.srcObject as MediaStream;
+    const stream = this.videoElement.srcObject as MediaStream;
     const tracks = stream.getTracks();
 
     tracks.forEach((track) => { track.stop(); });
 
-    this.stream.srcObject = null;
+    this.videoElement.srcObject = null;
   }
 
   getIODevices(): void {
