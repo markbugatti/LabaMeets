@@ -1,7 +1,20 @@
 <div>
-	<video  id="videoElement"  width="250" height="250" autoplay muted>
-	
-    </video>
-    
-    <button type="button" class="btn btn-primary" (click)="onButtonClick()">Primary</button>
+	<video  id="videoElement"  width="250" height="250" autoplay muted></video>
+    <button type="button" class="btn btn-primary" (click)="startVideo()">Start</button>
+    <button type="button" class="btn btn-danger" (click)="stopVideo()">Stop</button>
+
+    <div class="btn-group" dropdown>
+        <button id="button-basic" dropdownToggle type="button" class="btn btn-primary dropdown-toggle"
+                aria-controls="dropdown-basic">
+          Button dropdown <span class="caret"></span>
+        </button>
+        <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu"
+            role="menu" aria-labelledby="button-basic">
+          <li *ngFor="let camera of videoInputs" role="menuitem" ><a class="dropdown-item" href="#">{{camera?.label}}</a></li>
+          <li class="divider dropdown-divider"></li>
+          <li *ngFor="let microphone of audioInputs" role="menuitem" ><a class="dropdown-item" href="#">{{microphone?.label}}</a></li>
+          <li class="divider dropdown-divider"></li>
+          <li *ngFor="let speaker of audioOutputs" role="menuitem" ><a class="dropdown-item" href="#">{{speaker?.label}}</a></li>
+        </ul>
+      </div>
 </div>
