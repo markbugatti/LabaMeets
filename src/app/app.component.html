@@ -10,11 +10,11 @@
         </button>
         <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu"
             role="menu" aria-labelledby="button-basic">
-          <li *ngFor="let camera of videoInputs" role="menuitem" ><a class="dropdown-item" href="#">{{camera?.label}}</a></li>
+          <li *ngFor="let camera of videoInputs" role="menuitem" (click)="changeVideoInput(camera?.deviceId)"><a class="dropdown-item" href="#">{{camera?.label}}</a></li>
           <li class="divider dropdown-divider"></li>
-          <li *ngFor="let microphone of audioInputs" role="menuitem" ><a class="dropdown-item" href="#">{{microphone?.label}}</a></li>
+          <li *ngFor="let microphone of audioInputs" role="menuitem" (click)="changeAudioIntput(microphone?.deviceId)" ><a class="dropdown-item" href="#">{{microphone?.label}}</a></li>
           <li class="divider dropdown-divider"></li>
-          <li *ngFor="let speaker of audioOutputs" role="menuitem" ><a class="dropdown-item" href="#">{{speaker?.label}}</a></li>
+          <li *ngFor="let speaker of audioOutputs" role="menuitem" (click)="changeAudioOutput(speaker?.deviceId)"><a class="dropdown-item" href="#">{{speaker?.label}}</a></li>
         </ul>
       </div>
 </div>

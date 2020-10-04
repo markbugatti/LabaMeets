@@ -11,32 +11,56 @@ import {WebcamImage, WebcamInitError, WebcamUtil} from 'ngx-webcam';
 
 
 export class AppComponent implements OnInit {
-  public video: HTMLVideoElement;
+  public stream: HTMLVideoElement;
   public videoInputs: MediaDeviceInfo[];
   public audioInputs: MediaDeviceInfo[];
   // optional
   public audioOutputs: MediaDeviceInfo[];
+  private constraints: MediaStreamConstraints;
+  private videoConstraints: boolean | MediaTrackConstraints;
+  private audioConstraints: boolean | MediaTrackConstraints;
 
   ngOnInit(): void {
-    this.video = document.querySelector('#videoElement') as HTMLVideoElement;
+    this.stream = document.querySelector('#videoElement') as HTMLVideoElement;
     this.getIODevices();
+    this.constraints = { audio: true, video: true };
+    this.videoConstraints = this.constraints.video;
+    this.audioConstraints = this.constraints.audio;
+    console.log(navigator.mediaDevices.getSupportedConstraints());
   }
 
   // use Media Constraints to change camera. AT first stop() then StartVideo with appropriate constraints
-  changeVideoInput() {
+  changeVideoInput(deviceId: string): void {
+    this.constraints = {
+      audio: this.audioConstraints,
+      video: {
+        deviceId: deviceId,
+      },
+    }
+    this.videoConstraints = this.constraints.video;
+    this.stopVideo();
+    this.startVideo(this.constraints);
+  }
+
+  changeAudioIntput(deviceId: string): void {
+    this.constraints = {
+      audio: {
+        deviceId: deviceId,
+        echoCancellation: true,
+        noiseSuppression: true
+      },
+      video: this.videoConstraints
+    }
+    this.audioConstraints = this.constraints.audio;
+    this.stopVideo();
+    this.startVideo(this.constraints);
+  }
+
+  changeAudioOutput(deviceId: string) {
 
   }
 
-  changeAudioIntpu() {
-
-  }
-
-  changeAudioOutput() {
-
-  }
-
-  startVideo(): void {
-    const constraints = { audio: true, video: true }; 
+  startVideo(constraints: MediaStreamConstraints): void {
     // for old browsers
     if (navigator.mediaDevices === undefined) {
       const navigator: any = {};
@@ -61,9 +85,9 @@ export class AppComponent implements OnInit {
       }
     }
 
-    navigator.mediaDevices.getUserMedia(constraints)
+    navigator.mediaDevices.getUserMedia(this.constraints)
       .then((stream) => {
-        this.video.srcObject = stream;
+        this.stream.srcObject = stream;
       })
       .catch((error) => {
         console.log('Something went wrong!: ' + error);
@@ -72,12 +96,12 @@ export class AppComponent implements OnInit {
   }
 
   stopVideo(): void {
-    const stream = this.video.srcObject as MediaStream;
+    const stream = this.stream.srcObject as MediaStream;
     const tracks = stream.getTracks();
 
     tracks.forEach((track) => { track.stop(); });
 
-    this.video.srcObject = null;
+    this.stream.srcObject = null;
   }
 
   getIODevices(): void {
