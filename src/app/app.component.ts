@@ -16,7 +16,7 @@ export class AppComponent implements OnInit {
   public audioInputs: MediaDeviceInfo[];
   // optional
   public audioOutputs: MediaDeviceInfo[];
-  private constraints: MediaStreamConstraints;
+  public constraints: MediaStreamConstraints;
   private videoConstraints: boolean | MediaTrackConstraints;
   private audioConstraints: boolean | MediaTrackConstraints;
 
