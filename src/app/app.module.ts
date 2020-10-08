@@ -5,7 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 
 import { AppComponent } from './app.component';
-import { MediaService } from './_services/media.service'
+import { MediaService } from './_services/media.service';
 @NgModule({
   declarations: [
     AppComponent
